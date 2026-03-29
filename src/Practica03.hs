@@ -61,9 +61,47 @@ ALGORITMO DE SATURACION
 
 --Ejercicio 1
 hayResolvente :: Clausula -> Clausula -> Bool
-hayResolvente = undefined
+hayResolvente c1 c2 = c1 /= c2 && alguno (\l1 -> alguno (esComplemento l1) c2) c1
+  where
+    esComplemento (Var p) (Not (Var q)) = p == q
+    esComplemento (Not (Var p)) (Var q) = p == q
+    esComplemento _ _ = False
+
 
 --Ejercicio 2
 --Funcion principal que pasa la formula proposicional a fnc e invoca a res con las clausulas de la formula.
 saturacion :: Prop -> Bool
-saturacion = undefined
+saturacion p =
+  let clausulasOriginales = [quitar c | c <- clausulas p]
+   in satura clausulasOriginales
+  where
+    satura :: [Clausula] -> Bool
+    satura actuales
+      | [] pertenece actuales = False
+      | actuales == union = True
+      | otherwise = satura union
+      where
+        nuevas = [resolucion c1 c2 | c1 <- actuales, c2 <- actuales, hayResolvente c1 c2]
+        union = actuales ++ filtrar (noPertenece actuales) nuevas
+
+    quitar [] = []
+    quitar (x : xs) = x : quitar (filtrar (/= x) xs)
+
+
+-- Funciones auxiliares.
+alguno :: (a -> Bool) -> [a] -> Bool
+alguno _ [] = False
+alguno p (x:xs) = p x || alguno p xs
+
+pertenece :: Eq a => a -> [a] -> Bool
+pertenece _ [] = False
+pertenece x (y:ys) = x == y || pertenece x ys
+
+noPertenece :: Eq a => a -> [a] -> Bool
+noPertenece x xs = not (pertenece x xs)
+
+filtrar :: (a -> Bool) -> [a] -> [a]
+filtrar _ [] = []
+filtrar p (x:xs)
+  | p x       = x : filtrar p xs
+  | otherwise = filtrar p xs
