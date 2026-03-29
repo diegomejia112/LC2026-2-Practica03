@@ -44,11 +44,20 @@ fnn (Not (Impl p q)) = fnn (And p (Not q))
 fnn (Not (Syss p q)) = fnn (Or (Not (Impl p q)) (Not (Impl q p)))
 fnn (And p q) = And (fnn p) (fnn q)
 fnn (Or p q) = Or (fnn p) (fnn q)
+fnn (Impl p q) = fnn (Or (Not p) q)
+fnn (Syss p q) = fnn (And (Impl p q) (Impl q p))
 
 --Ejercicio 2
 fnc :: Prop -> Prop
-fnc = undefined
+fnc p = auxFnc (fnn p)
+  where
+    auxFnc (And p1 p2) = And (auxFnc p1) (auxFnc p2)
+    auxFnc (Or p1 p2) = dist (auxFnc p1) (auxFnc p2)
+    auxFnc p1 = p1
 
+    dist p (And q1 q2) = And (dist p q1) (dist p q2)
+    dist (And p1 p2) q = And (dist p1 q) (dist p2 q)
+    dist p q = Or p q
 {-
 RESOLUCION BINARIA
 -}
