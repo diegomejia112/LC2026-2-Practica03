@@ -41,6 +41,9 @@ fnn (Not (Not p)) = fnn p
 fnn (Not (And p q)) = Or (fnn (Not p)) (fnn (Not q))
 fnn (Not (Or p q)) = And (fnn (Not p)) (fnn (Not q))
 fnn (Not (Impl p q)) = fnn (And p (Not q))
+fnn (Not (Syss p q)) = fnn (Or (Not (Impl p q)) (Not (Impl q p)))
+fnn (And p q) = And (fnn p) (fnn q)
+fnn (Or p q) = Or (fnn p) (fnn q)
 
 --Ejercicio 2
 fnc :: Prop -> Prop
